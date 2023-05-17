@@ -7,6 +7,7 @@ const Body = styled.div`
     height: 100%;
     width: 100%;
     background-color: bisque;
+    overflow: auto;
 `;
 
 type Props = {
