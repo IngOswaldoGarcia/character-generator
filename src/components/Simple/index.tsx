@@ -9,9 +9,9 @@ const MainContainer = styled.div`
 `;
 
 const ControlContainer = styled.div`
-    position: absolute;
+    position: fixed;
     top: 10px;
-    right: 10px;
+    right: 40px;
     width: 200px;
     height: 250px;
     background-color: #FFF;
@@ -62,12 +62,12 @@ const InputSubmit = styled.input`
 `;
 
 const MesuringContainer = styled.div`
-    position: absolute;
+    position: fixed;
     top: 10px;
     right: 0;
     left: 0;
     width: 200px;
-    height: 150px;
+    height: auto;
     margin: 0 auto;
     background-color: #FFF;
     border-radius: 30px;
@@ -103,6 +103,9 @@ const CharactersContainer = styled.p`
     width: 100%;
     height: 100%;
     font-size: 1rem;
+    display: flex;
+    flex-direction: row;
+    word-break: break-all;
 `;
 
 const StopGeneration = styled.button`
@@ -121,14 +124,35 @@ const StopGeneration = styled.button`
 const Simple = () => {
 
     const [stopGenerator, setStopGenerator] = useState(false);
+    const [generatorStatus, setGeneratorStatus] = useState(false);
+    const [characters, setCharacters] = useState("");
+    const [charactersLimit, setCharactersLimit] = useState(0);
+    const [timer, setTimer] = useState(0);
+    const [time, setTime] = useState(0);
+
+    const generateTimeout = () => {setTimeout(() => {
+        setCharacters(characters.concat(Math.random().toString(36).substr(2, 1)))
+    }, time)}
+
+    const startTimer = () => {setTimeout(() => {
+        setTimer(timer + 1);
+    }, 1000)}
 
     useEffect(() => {
-        if (stopGenerator){
-            setInterval(() => {
-                console.log("Hola");
-            }, 1000);  
+        if(generatorStatus){
+            startTimer();
+        } 
+    }, [timer, generatorStatus]);
+
+    useEffect(() => {
+        if(generatorStatus && characters.length < charactersLimit){
+            generateTimeout();
+        }else if(characters.length >= charactersLimit){
+            setGeneratorStatus(false);
         }
-      }, [stopGenerator]);
+
+    }, [characters, generatorStatus])
+    
 /* 
     const mainGeneratorFunc = () => { 
         console.log(stopGenerator);
@@ -139,14 +163,18 @@ const Simple = () => {
         }, 1000);  
     }
 */
-    const startGenerator = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    const startGenerator =  (e: React.FormEvent<HTMLFormElement>): void => {
         e.preventDefault();
-        setStopGenerator(true);
+        setGeneratorStatus(true)
     }  
 
     const stopGeneratorValue = () => {
-        console.log("click");
-        setStopGenerator(false);
+        setGeneratorStatus(false);
+    };
+
+    const clearGeneratorValues = () => {
+        setCharacters("");
+        setTimer(0);
     };
  
   return (
@@ -157,7 +185,7 @@ const Simple = () => {
                     Total Time:
                 </LabelTitle>
                 <LabelCounter>
-                    0
+                    {timer}
                 </LabelCounter>
             </LabelContainer>
             <LabelContainer>
@@ -165,26 +193,27 @@ const Simple = () => {
                     Characters Number:
                 </LabelTitle>
                 <LabelCounter>
-                    0
+                    {characters.length}
                 </LabelCounter>
             </LabelContainer>
             <StopGeneration onClick={() => {stopGeneratorValue()}}>Stop</StopGeneration>
+            <StopGeneration onClick={() => {clearGeneratorValues()}}>Clear</StopGeneration>
         </MesuringContainer>
         <ControlContainer>
             <FormContainer onSubmit={(e) => startGenerator(e)}>
                 <LabelInput>
                     Number of characters:
-                    <Input type="text"/>
+                    <Input type="number" value={charactersLimit} onChange={e => setCharactersLimit(parseFloat(e.target.value))}/>
                 </LabelInput>
                 <LabelInput>
                     Time between characters:
-                    <Input type="text"/>
+                    <Input type="number" value={time} onChange={e => setTime(Number(e.target.value))} />
                 </LabelInput>
                 <InputSubmit type="submit" />
             </FormContainer>
         </ControlContainer>
         <CharactersContainer>
-            hola
+            {characters}
         </CharactersContainer>
     </MainContainer>
 
