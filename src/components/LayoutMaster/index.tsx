@@ -6,8 +6,10 @@ import styled from 'styled-components';
 const Body = styled.div`
     height: 100%;
     width: 100%;
-    background-color: bisque;
+    background-color: #5681A6;
+    color: #F2921D;
     overflow: auto;
+
 `;
 
 type Props = {

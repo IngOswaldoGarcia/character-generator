@@ -1,9 +1,10 @@
-import LayoutMaster from "@/components/LayoutMaster"
+import LayoutMaster from "@/components/LayoutMaster";
+import MainPage from "@/components/MainPage"
 
 export default function Home() {
   return (
     <LayoutMaster>
-      <h1>Hola 1</h1>
+      <MainPage />
     </LayoutMaster>
   )
 }
